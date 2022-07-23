@@ -6,18 +6,20 @@ use App\Http\Requests\DepartmentRequest;
 use App\Http\Resources\DepartmentRecource;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use Exception;
 
-class DepartmentController extends Controller
+class DepartmentController extends ApiController
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\
      */
     public function index()
     {
-        return DepartmentRecource::collection(Department::all());
+        return  $this->success(DepartmentRecource::collection(Department::all()), 200);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -36,11 +38,9 @@ class DepartmentController extends Controller
      */
     public function store(DepartmentRequest $request)
     {
-        $department = Department::create([
-            'name' => $request->input('name')
-        ]);
+        $department = Department::create($request->all());
 
-        return new DepartmentRecource($department);
+        return $this->success(new DepartmentRecource($department), 200, 'Added Department successfully');
     }
 
     /**
@@ -49,9 +49,14 @@ class DepartmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Department $department)
+    public function show($department)
     {
-        return new DepartmentRecource($department);
+        try {
+            $department = Department::find($department);
+            return $this->success(new DepartmentRecource($department), 200);
+        } catch (Exception $ex) {
+            return $this->error(['id not founde'], 'The Department of this id cannot be found', 404);
+        }
     }
 
     /**
@@ -72,13 +77,15 @@ class DepartmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(DepartmentRequest $request, Department $department)
+    public function update(DepartmentRequest $request, $department)
     {
-        $department->update([
-            'name' => $request->input('name')
-        ]);
-
-        return new DepartmentRecource($department);
+        $department = Department::find($department);
+        if ($department) {
+            $department->update($request->all());
+            return $this->success(new DepartmentRecource($department), 200, 'Department updated successfully');
+        } else {
+            return $this->error('id not founde', 'The Department of this id cannot be found', 404);
+        }
     }
 
     /**
@@ -87,9 +94,14 @@ class DepartmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Department $department)
+    public function destroy($department)
     {
-        $department->delete();
-        return response(null, 204);
+        $department = Department::find($department);
+        if ($department) {
+            $department->delete();
+            return $this->responseDelete();
+        } else {
+            return $this->error('id not founde', 'The Department of this id cannot be found', 404);
+        }
     }
 }
