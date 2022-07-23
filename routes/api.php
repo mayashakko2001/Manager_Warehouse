@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DepartmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->group(function(){
+    Route::get('get_all_department', [DepartmentController::class, 'index']);
+    Route::post('add_department', [DepartmentController::class, 'store']);
+    Route::get('department_by_id/{department}', [DepartmentController::class, 'show']);
+    Route::put('edit_department_by_id/{department}', [DepartmentController::class, 'update']);
+    Route::delete('delete_department_by_id/{department}', [DepartmentController::class, 'destroy']);
+// });
