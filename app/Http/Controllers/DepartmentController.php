@@ -13,7 +13,7 @@ class DepartmentController extends ApiController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\
+     * @return \Illuminate\Http\ 
      */
     public function index()
     {
@@ -53,6 +53,7 @@ class DepartmentController extends ApiController
     {
         try {
             $department = Department::find($department);
+            
             return $this->success(new DepartmentRecource($department), 200);
         } catch (Exception $ex) {
             return $this->error(['id not founde'], 'The Department of this id cannot be found', 404);

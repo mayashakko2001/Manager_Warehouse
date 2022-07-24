@@ -10,4 +10,8 @@ class Department extends Model
     use HasFactory;
      
     protected $fillable = ['name'];
+
+    public function Product(){
+        return $this->hasMany(Product::class,'department_id');
+    }
 }
