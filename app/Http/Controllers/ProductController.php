@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProductRequest;
+use Exception;
+use Faker\Core\File;
 use App\Models\Product;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Http\Requests\ProductRequest;
+use App\Http\Controllers\ApiController;
 use App\Http\Resources\ProductRecource;
-use Exception;
+use Illuminate\Support\Facades\Storage;
 
 
 class ProductController extends ApiController
@@ -40,14 +43,15 @@ class ProductController extends ApiController
      */
     public function store(ProductRequest $request)
     {
-            // $newImageName = time() . '-' . $request->name . '.' . 
-            // $request->image_path->extension();
-            // $request->image->move(public_path('images'),$newImageName);
+        
+        if ($request->hasFile('image_path')) {
+            $path = $request->file('image_path')->store('/public/products');
+        }
             
             $product = Product::create([
             'department_id' => $request->input('department_id'),
             'name' => $request->input('name'),
-            'image_path' => $request->input('image_path'),
+            'image_path' => $path,
             'product_code' => $request->input('product_code'),
             'purchasing_price' => $request->input('purchasing_price'),
             'seling_price' => $request->input('seling_price'),
@@ -65,9 +69,12 @@ class ProductController extends ApiController
      */
     public function show($product)
     {
+
         try {
             $product = Product::find($product);
+
             return $this->success(new ProductRecource($product), 200);
+
         } catch (Exception $ex) {
             return $this->error(['id not founde'], 'The Product of this id cannot be found', 404);
         }
@@ -96,10 +103,15 @@ class ProductController extends ApiController
         $product = Product::find($product);
 
         if ($product) {
+
+            if ($request->hasFile('image_path')) {
+                $path = $request->file('image_path')->store('/public/products');
+            }
+
             $product->update([
                 'department_id' => $request->input('department_id'),
                 'name' => $request->input('name'),
-                'image_path' => $request->input('image_path'),
+                'image_path' => $path,
                 'product_code' => $request->input('product_code'),
                 'purchasing_price' => $request->input('purchasing_price'),
                 'seling_price' => $request->input('seling_price'),
@@ -122,7 +134,9 @@ class ProductController extends ApiController
     {
         $product = Product::find($product);
         if ($product) {
+           
             $product->delete();
+
             return $this->responseDelete();
         } else {
             return $this->error('id not founde', 'The product of this id cannot be found', 404);

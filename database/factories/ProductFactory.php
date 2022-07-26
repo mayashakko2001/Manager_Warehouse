@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Department;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,9 +18,11 @@ class ProductFactory extends Factory
      */
     public function definition()
     {
+        $departmentIDs = DB::table('departments')->pluck('id');
+
         return [
             'name' => $this->faker->name(),
-            'department_id' => $this->faker->numberBetween(1,Department::all()->count()),
+            'department_id' =>$this->faker->randomElement($departmentIDs),
             'image_path' => $this->faker->imageUrl($width = 200, $height = 200),
             'product_code' => $this->faker->randomDigit(),
             'purchasing_price' => $this->faker->randomDigit(),

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\InventoryProductsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,4 +29,10 @@ Route::post('add_product', [ProductController::class, 'store']);
 Route::get('product_by_id/{product}', [ProductController::class, 'show']);
 Route::put('update_product_by_id/{product}', [ProductController::class, 'update']);
 Route::delete('delete_product_by_id/{product}', [ProductController::class, 'destroy']);
+
+Route::get('get_all_inventory_products', [InventoryProductsController::class, 'index']);
+Route::post('add_inventory_products', [InventoryProductsController::class, 'store']);
+Route::get('inventory_products_by_id/{inventory_products}', [InventoryProductsController::class, 'show']);
+Route::put('update_inventory_products_by_id/{inventory_products}', [InventoryProductsController::class, 'update']);
+Route::delete('delete_inventory_products_by_id/{inventory_products}', [InventoryProductsController::class, 'destroy']);
 // });
