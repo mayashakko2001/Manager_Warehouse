@@ -18,11 +18,10 @@ class ProductFactory extends Factory
      */
     public function definition()
     {
-        $departmentIDs = DB::table('departments')->pluck('id');
 
         return [
             'name' => $this->faker->name(),
-            'department_id' =>$this->faker->randomElement($departmentIDs),
+            'department_id' =>Department::all()->random()->id,
             'image_path' => $this->faker->imageUrl($width = 200, $height = 200),
             'product_code' => $this->faker->randomDigit(),
             'purchasing_price' => $this->faker->randomDigit(),

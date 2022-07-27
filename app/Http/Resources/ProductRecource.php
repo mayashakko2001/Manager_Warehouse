@@ -18,11 +18,12 @@ class ProductRecource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'department' => $this->department,
-            'image_path' => $this->image_path,
+            'image_path' => asset($this->image_path),
             'product_code' => $this->product_code,
             'purchasing_price' => $this->purchasing_price,
             'seling_price' => $this->seling_price,
             'note' => $this->note,
+            'inventory' => $this->inventoryProduct,
         ];
     }
 }

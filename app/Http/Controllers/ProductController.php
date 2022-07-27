@@ -45,7 +45,7 @@ class ProductController extends ApiController
     {
         
         if ($request->hasFile('image_path')) {
-            $path = $request->file('image_path')->store('/public/products');
+            $path = $request->file('image_path')->store('public/products');
         }
             
             $product = Product::create([
@@ -86,9 +86,16 @@ class ProductController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($product)
     {
-        //
+        try {
+            $product = Product::find($product);
+
+            return $this->success(new ProductRecource($product), 200);
+
+        } catch (Exception $ex) {
+            return $this->error(['id not founde'], 'The Product of this id cannot be found', 404);
+        }
     }
 
     /**
@@ -105,7 +112,12 @@ class ProductController extends ApiController
         if ($product) {
 
             if ($request->hasFile('image_path')) {
-                $path = $request->file('image_path')->store('/public/products');
+                $path = $request->file('image_path')->store('public/products');
+            }
+            
+            if(Storage::exists($product->image_path)){
+                Storage::delete($product->image_path);
+                $product->delete();
             }
 
             $product->update([
@@ -134,8 +146,12 @@ class ProductController extends ApiController
     {
         $product = Product::find($product);
         if ($product) {
-           
+            
+           if(Storage::exists($product->image_path)){
+            Storage::delete($product->image_path);
             $product->delete();
+           }
+           
 
             return $this->responseDelete();
         } else {

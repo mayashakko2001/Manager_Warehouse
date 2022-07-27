@@ -13,7 +13,7 @@ class inventoryProduct extends Model
     protected $fillable = ['product_id','quantity'];
 
     public function product(){
-        return $this->BelongsTo(Product::class);
+        return $this->belongsTo(Product::class);
     }
 
 }

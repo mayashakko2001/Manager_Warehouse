@@ -41,8 +41,15 @@ class InventoryProductsController extends ApiController
      */
     public function store(InventoryProductsRequest $request)
     {
-
+       if(inventoryProduct::where('product_id',$request->product_id)){
+        $inventoryproduct = inventoryProduct::where('product_id',$request->product_id)->first();
+        $inventoryproduct->quantity += $request->quantity;
+        $inventoryproduct->update();
+        return $this->success(new InventoryProductsResource($inventoryproduct), 200, 'Updated InventoryProduct successfully');
+       }
+       else{
         $inventoryproduct = InventoryProduct::create($request->all());
+       }
 
         return $this->success(new InventoryProductsResource($inventoryproduct), 200, 'Added InventoryProduct successfully');
     }
@@ -55,12 +62,13 @@ class InventoryProductsController extends ApiController
      */
     public function show($inventory_products)
     {
+
         try {
             $inventory_products = InventoryProduct::find($inventory_products);
             
             return $this->success(new InventoryProductsResource($inventory_products), 200);
         } catch (Exception $ex) {
-            return $this->error(['id not founde'], 'The InventoryProduct of this id cannot be found', 404);
+            return $this->error(['id not founde'], 'The inventory_products of this id cannot be found', 404);
         }
     }
 
@@ -70,9 +78,16 @@ class InventoryProductsController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($inventory_products)
     {
-        //
+        
+        try {
+            $inventory_products = InventoryProduct::find($inventory_products);
+            
+            return $this->success(new InventoryProductsResource($inventory_products), 200);
+        } catch (Exception $ex) {
+            return $this->error(['id not founde'], 'The inventory_products of this id cannot be found', 404);
+        }
     }
 
     /**
@@ -85,13 +100,24 @@ class InventoryProductsController extends ApiController
     public function update(InventoryProductsRequest $request, $inventory_products)
     {
         $inventory_products = InventoryProduct::find($inventory_products);
-        if ($inventory_products) {
-            $inventory_products->update($request->all());
-            return $this->success(new DepartmentRecource($inventory_products), 200, 'Department updated successfully');
-        } else {
-            return $this->error('id not founde', 'The InventoryProduct of this id cannot be found', 404);
-        }
+            
+           
+                if ($inventory_products) {
+                    if($request->quantity == 0){
+
+                        $inventory_products->delete();
+                        return $this->responseDelete();
+
+                        }else{
+                            $inventory_products->update($request->all());
+                            return $this->success(new InventoryProductsResource($inventory_products), 200, 'Department updated successfully');
+                        }
+                } else {
+                    return $this->error('id not founde', 'The InventoryProduct of this id cannot be found', 404);
+                }
+            
     }
+    
 
     /**
      * Remove the specified resource from storage.

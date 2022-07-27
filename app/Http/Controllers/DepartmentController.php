@@ -66,9 +66,15 @@ class DepartmentController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($department)
     {
-        //
+        try {
+            $department = Department::find($department);
+            
+            return $this->success(new DepartmentRecource($department), 200);
+        } catch (Exception $ex) {
+            return $this->error(['id not founde'], 'The Department of this id cannot be found', 404);
+        }
     }
 
     /**
