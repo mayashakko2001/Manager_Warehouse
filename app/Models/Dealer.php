@@ -12,5 +12,8 @@ class Dealer extends Model
 
     public $fillable = ['name','mobile_number','address','country','city','dealer_type'];
 
+    public function import(){
+        return $this->hasMany(Import::class);
+    }
 
 }

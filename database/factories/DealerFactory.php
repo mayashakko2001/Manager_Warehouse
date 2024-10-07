@@ -21,7 +21,7 @@ class DealerFactory extends Factory
             'address' => $this->faker->sentences(),
             'country' => $this->faker->word(),
             'city' => $this->faker->word(),
-            'dealer_type' => $this->faker->randomDigit(),
+            'dealer_type' => 'seller',
         ];
     }
 }
